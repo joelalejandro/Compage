@@ -63,6 +63,10 @@ class PluginHook extends PluginComponent {
     add_options_page($this->callback, $page_title, $menu_title, $cap, $menu_slug);
   }
 
+  public function toManagementPage($page_title, $menu_title, $cap, $menu_slug) {
+    add_management_page($this->callback, $page_title, $menu_title, $cap, $menu_slug);
+  }
+
   public function toMetaBox($id, $title, $type, $size, $priority) {
     add_meta_box($id, $title, $this->callback, $type, $size, $priority);
   }
