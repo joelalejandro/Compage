@@ -2,9 +2,9 @@
 /*
 Plugin Name: Compage
 Plugin URI: https://github.com/Moobin/Compage
-Description: Framework base para construcción de plugins de Wordpress.
+Description: Framework base para construcción de plugins y templates de Wordpress.
 Author: Moobin
-Version: 0.1.1
+Version: 0.2
 Author URI: http://moobin.net/
 License: MIT
 */
@@ -37,7 +37,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 /**
  * @package Compage
- * @version 0.1.1
+ * @version 0.2
  */
 
 namespace Compage;
