@@ -36,5 +36,6 @@ abstract class ComponentType {
   const SqlData = 4;
   const Asset = 5;
   const Log = 6;
+  const Hook = 7;
     
 }

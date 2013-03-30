@@ -32,9 +32,9 @@ class Entity extends Component {
   protected $table_structure_file;
   protected $table_data_file;
 
-  public function __construct(Pluggable $pluggable) {
+  public function __construct($pluggable) {
     parent::__construct($pluggable);
-    $this->type = ComponentType::Entity;
+    $this->setComponentType(ComponentType::Entity);
   }
 
   public function getTableStructureFile() {

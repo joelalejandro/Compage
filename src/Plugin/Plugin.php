@@ -31,7 +31,7 @@ use Compage\Essentials\Context;
 use Compage\Essentials\Pluggable;
 
 /* Handles plugin common tasks. */
-class Plugin extends Pluggable {
+abstract class Plugin extends Pluggable {
 
   /* An array of dependencies */
   protected $dependencies;
@@ -71,17 +71,6 @@ class Plugin extends Pluggable {
     } else {
       return true;
     }
-  }
-
-  static public function exists($class_name) {
-    $found = false;
-    foreach (get_declared_classes() as $instance) {
-      if (in_array($class_name, explode("\\", $instance))) {
-        $found = $instance;
-        break;
-      }
-    }
-    return $found;
   }
 
   static public function run($instance, $file) {

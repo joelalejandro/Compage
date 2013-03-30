@@ -28,6 +28,11 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace Compage\Essentials;
 
 use Compage\Component\ComponentType;
+use Compage\Component\Component;
+use Compage\Component\Controller;
+use Compage\Component\Entity;
+use Compage\Component\Hook;
+use Compage\Component\View;
 
 abstract class Pluggable {
 
@@ -63,6 +68,7 @@ abstract class Pluggable {
 
   public function setDirectory($type, $dir) {
     $this->directories[$type] = $dir;
+    return $this;
   }
 
   public function getType() {
@@ -75,6 +81,7 @@ abstract class Pluggable {
 
   public function setName($name) {
     $this->name = $name;
+    return $this;
   }
 
   public function getFullyQualifiedName() {
@@ -83,6 +90,7 @@ abstract class Pluggable {
 
   public function setFullyQualifiedName($fqn) {
     $this->fullyQualifiedEntityName = $fqn;
+    return $this;
   }
 
   public function getRootFile() {
@@ -175,5 +183,17 @@ abstract class Pluggable {
   public function log($msg) {
     file_put_contents($this->getAbsoluteRootPath(ComponentType::Log) . "/" . date("d-m-Y") . ".log", $msg, FILE_APPEND);
   }  
+
+  static public function exists($class_name) {
+    $found = false;
+    foreach (get_declared_classes() as $instance) {
+      if (in_array($class_name, explode("\\", $instance))) {
+        $found = $instance;
+        break;
+      }
+    }
+    return $found;
+  }
+
 
 }

@@ -32,11 +32,11 @@ use Compage\Essentials\Pluggable;
 
 class InitializeController extends Controller {
 
-  public function __construct(Theme $theme) {
+  public function __construct($theme) {
     parent::__construct($theme);
 
-    $this->hook(function() (use $theme) {
-      foreach ($theme->features as $feature => $settings) {
+    $this->hook(function() use ($theme) {
+      foreach ($theme->get("features") as $feature => $settings) {
         if ($feature == "shortcode-in-widgets") {
           add_filter("widget_text", "do_shortcode");
           continue;
@@ -46,8 +46,8 @@ class InitializeController extends Controller {
       }
     })->toAction("after_setup_theme");
 
-    $this->hook(function() (use $theme) {
-      foreach ($theme->stylesheets as $uniqid => $stylesheet) {
+    $this->hook(function() use ($theme) {
+      foreach ($theme->get("stylesheets") as $uniqid => $stylesheet) {
         wp_register_style(
           $uniqid,
           $stylesheet["source"],
@@ -58,7 +58,7 @@ class InitializeController extends Controller {
         wp_enqueue_style($uniqid);
       }
 
-      foreach ($theme->scripts as $uniqid => $script) {
+      foreach ($theme->get("scripts") as $uniqid => $script) {
         wp_register_script(
           $uniqid,
           $script["source"],
@@ -70,18 +70,18 @@ class InitializeController extends Controller {
       }
     })->toAction("wp_enqueue_scripts");
 
-    $this->hook(function() (use $theme) {
-      foreach ($theme->menus as $menu_id => $menu_caption) {
+    $this->hook(function() use ($theme) {
+      foreach ($theme->get("menus") as $menu_id => $menu_caption) {
         register_nav_menu($menu_id, $menu_caption);
       }
     })->toAction("init");
 
-    $this->hook(function() (use $theme) {
-      foreach ($theme->sidebars as $sidebar) {
+    $this->hook(function() use ($theme) {
+      foreach ($theme->get("sidebars") as $sidebar) {
         register_sidebar($sidebar);
       }
 
-      foreach ($theme->widgets as $widget) {
+      foreach ($theme->get("widgets") as $widget) {
         register_widget($widget);
       }
     })->toAction("widgets_init");

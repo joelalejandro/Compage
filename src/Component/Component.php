@@ -35,8 +35,8 @@ abstract class Component {
 
   protected $__type;
 
-  public function __construct(Pluggable $plugin) {
-    $this->__pluggable = $plugin;
+  public function __construct($pluggable) {
+    $this->__pluggable = $pluggable;
   }
 
   public function getComponentName() {

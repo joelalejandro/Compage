@@ -31,7 +31,7 @@ abstract class Context {
 
   static private $pluggables = array();
 
-  public static function registerPluggable(Pluggable $pluggable) {
+  public static function registerPluggable($pluggable) {
     self::$pluggables[] = $pluggable;
   }
 

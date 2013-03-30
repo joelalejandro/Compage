@@ -31,11 +31,13 @@ class Hook extends Component {
 
   private $callback;
 
-  public function __construct(Pluggable $pluggable, $callback) {
+  public function __construct($pluggable, $callback) {
     parent::__construct($pluggable);
 
     if (is_callable($callback))
       $this->callback = $callback;
+
+    $this->setComponentType(ComponentType::Hook);
   }
 
   public function toAction($action, $priority = 10, $accepted_args = 1) {

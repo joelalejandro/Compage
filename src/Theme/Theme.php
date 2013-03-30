@@ -29,9 +29,10 @@ namespace Compage\Theme;
 
 use Compage\Essentials\Context;
 use Compage\Essentials\Pluggable;
+use Compage\Essentials\PluggableType;
 use Compage\Theme\Controllers\InitializeController;
 
-class Theme extends Pluggable {
+abstract class Theme extends Pluggable {
 
   protected $stylesheets;
   protected $scripts;
@@ -48,6 +49,19 @@ class Theme extends Pluggable {
     $this->menus = array();
     $this->sidebars = array();
     $this->widgets = array();
+
+    $this->type = PluggableType::Theme;
+  }
+
+  public function get($collection) {
+    if (!in_array($collection, array(
+      "stylesheets", "scripts", "features", "menus",
+      "sidebars", "widgets"
+    ))) {
+      return false;
+    } else {
+      return $this->{$collection};
+    }
   }
 
   public function addStylesheet($css, $media) {
@@ -55,6 +69,7 @@ class Theme extends Pluggable {
       "source" => $css,
       "media" => $media
     );
+    return $this;
   }
 
   public function addScript($js, $footer = false) {
@@ -62,6 +77,7 @@ class Theme extends Pluggable {
       "source" => $js,
       "footer" => $footer
     );
+    return $this;
   }
 
   public function addFeature($feature, array $options = array()) {
@@ -75,22 +91,32 @@ class Theme extends Pluggable {
     ))) {
       $this->features[$feature] = $options;
     }
+    return $this;
   }
 
   public function addMenu($id, $caption) {
     $this->menus[$id] = $caption;
+    return $this;
   }
 
   public function addSidebar($options = array()) {
-    $this->sidebars[$options["id"]] => $options;
+    $this->sidebars[$options["id"]] = $options;
+    return $this;
   }
 
   public function addWidget($widget_class) {
     $this->widgets[] = $widget_class;
+    return $this;
   }
 
   public function initialize() {
     new InitializeController($this);
   }
-
+  
+  static public function activate($instance, $file) {
+    $class = self::exists($instance);
+    if ($class !== false) {
+      Context::registerPluggable(new $class($file));
+    }
+  }
 }

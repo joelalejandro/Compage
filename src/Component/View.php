@@ -25,18 +25,18 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-namespace Compage;
+namespace Compage\Component;
 
 class View extends Component {
 
   protected $context;
   protected $extension;
 
-  public function __construct(Pluggable $pluggable, $template_name) {
+  public function __construct($pluggable, $template_name) {
     parent::__construct($plugin);
     $this->setComponentName($template_name);
     $this->context = array();
-    $this->type = ComponentType::View;
+    $this->setComponentType(ComponentType::View);
   }
 
   public function getFileName() {

@@ -29,15 +29,15 @@ namespace Compage\Component;
 
 class Controller extends Component {
 
-  public function __construct(Pluggable $pluggable, $name = "") {
-    parent::__construct($plugin);
+  public function __construct($pluggable, $name = "") {
+    parent::__construct($pluggable);
     $this->setComponentType(ComponentType::Controller);
     $this->setComponentName(basename($name));
   }
 
   public function instantiate() {
     $component = $this->getPluggable()->getFullyQualifiedName()
-               . "\\" . $this->getPluggable()->getDirectory("controller")
+               . "\\" . $this->getPluggable()->getDirectory(ComponentType::Controller)
                . "\\" . $this->getComponentName();
     $class = new \ReflectionClass($component);
     return new $component($this->getPluggable(), $this->getComponentName());
@@ -60,8 +60,8 @@ class Controller extends Component {
     }
   }
 
-  public function useTemplate($template) {
-    return new Template($this->getPluggable(), $template);
+  public function useView($view) {
+    return new View($this->getPluggable(), $view);
   }
 
 }
