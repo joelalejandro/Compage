@@ -1,15 +1,5 @@
 <?php
 /*
-Plugin Name: Compage
-Plugin URI: https://github.com/Moobin/Compage
-Description: Framework base para construcción de plugins y templates de Wordpress.
-Author: Moobin
-Version: 0.2
-Author URI: http://moobin.net/
-License: MIT
-*/
-
-/*
 Copyright (c) 2013 Joel A. Villarreal Bertoldi
 
 Permission is hereby granted, free of charge, to any
@@ -35,24 +25,57 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/**
- * @package Compage
- * @version 0.2
- */
+namespace Compage\Extensions\Notification;
 
-namespace Compage;
+/* Handles plugin notifications hooks. */
+abstract class BaseNotification {
 
-require "Essentials/PluggableType.php";
-require "Essentials/Pluggable.php";
-require "Essentials/Context.php";
-require "Component/ComponentType.php";
-require "Component/Component.php";
-require "Component/Controller.php";
-require "Component/Entity.php";
-require "Component/Hook.php";
-require "Component/View.php";
-require "Extensions/Notification/BaseNotification.php";
-require "Extensions/Notification/Notification.php";
-require "Plugin/Plugin.php";
-require "Theme/Theme.php";
-require "Theme/Controllers/InitializeController.php";
+  protected $message;
+  protected $type;
+
+  public function __construct($message, $type = "info") {
+    $this->setMessage($message)->setType($type);
+    if ($message != "" && $message != null) {
+      add_action("admin_notices", array($this, "show"));
+    }
+  }
+
+  public function show() {
+    echo "<div class='" . $this->getTypeClass() . "'>";
+    echo $this->message;
+    echo "</div>";
+  }
+
+  public function getMessage() {
+    return $this->message;
+  }
+
+  public function setMessage($message) {
+    $this->message = $message;
+    return $this;
+  }
+
+  public function getType() {
+    return $this->type;
+  }
+
+  protected function getTypeClass() {
+    $type_class = "";
+    switch ($this->getType()) {
+      case "info":
+        $type_class = "updated";
+        break;
+      case "error":
+        $type_class = "error";
+        break;
+    }
+    return $type_class;
+  }
+
+  public function setType($type) {
+    $this->type = $type;
+    return $this;
+  }
+
+
+}

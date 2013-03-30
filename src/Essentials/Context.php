@@ -1,15 +1,5 @@
 <?php
 /*
-Plugin Name: Compage
-Plugin URI: https://github.com/Moobin/Compage
-Description: Framework base para construcción de plugins y templates de Wordpress.
-Author: Moobin
-Version: 0.2
-Author URI: http://moobin.net/
-License: MIT
-*/
-
-/*
 Copyright (c) 2013 Joel A. Villarreal Bertoldi
 
 Permission is hereby granted, free of charge, to any
@@ -35,24 +25,45 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/**
- * @package Compage
- * @version 0.2
- */
+namespace Compage\Essentials;
 
-namespace Compage;
+abstract class Context {
 
-require "Essentials/PluggableType.php";
-require "Essentials/Pluggable.php";
-require "Essentials/Context.php";
-require "Component/ComponentType.php";
-require "Component/Component.php";
-require "Component/Controller.php";
-require "Component/Entity.php";
-require "Component/Hook.php";
-require "Component/View.php";
-require "Extensions/Notification/BaseNotification.php";
-require "Extensions/Notification/Notification.php";
-require "Plugin/Plugin.php";
-require "Theme/Theme.php";
-require "Theme/Controllers/InitializeController.php";
+  static private $pluggables = array();
+
+  public static function registerPluggable(Pluggable $pluggable) {
+    self::$pluggables[] = $pluggable;
+  }
+
+  public static function get($name) {
+    $p = null;
+    foreach (self::$pluggables as $pluggable) {
+      if ($pluggable->getName() == $name) {
+        $p = $pluggable;
+        break;
+      }
+    }
+    return $p;    
+  }
+
+  public static function getPlugins() {
+    $plugins = array();
+    foreach (self::$pluggables as $pluggable) {
+      if ($pluggable instanceof Plugin) {
+        $plugins[] = $pluggable;
+      }
+    }
+    return $plugins;
+  }
+
+  public static function getThemes() {
+    $themes = array();
+    foreach (self::$pluggables as $pluggable) {
+      if ($pluggable instanceof Theme) {
+        $themes[] = $pluggable;
+      }
+    }
+    return $themes;
+  }
+  
+}

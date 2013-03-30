@@ -1,15 +1,5 @@
 <?php
 /*
-Plugin Name: Compage
-Plugin URI: https://github.com/Moobin/Compage
-Description: Framework base para construcción de plugins y templates de Wordpress.
-Author: Moobin
-Version: 0.2
-Author URI: http://moobin.net/
-License: MIT
-*/
-
-/*
 Copyright (c) 2013 Joel A. Villarreal Bertoldi
 
 Permission is hereby granted, free of charge, to any
@@ -35,24 +25,13 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/**
- * @package Compage
- * @version 0.2
- */
+namespace Compage\Extensions\Notification;
 
-namespace Compage;
+/* Handles extensible plugin notifications. */
+class Notification extends BaseNotification {
 
-require "Essentials/PluggableType.php";
-require "Essentials/Pluggable.php";
-require "Essentials/Context.php";
-require "Component/ComponentType.php";
-require "Component/Component.php";
-require "Component/Controller.php";
-require "Component/Entity.php";
-require "Component/Hook.php";
-require "Component/View.php";
-require "Extensions/Notification/BaseNotification.php";
-require "Extensions/Notification/Notification.php";
-require "Plugin/Plugin.php";
-require "Theme/Theme.php";
-require "Theme/Controllers/InitializeController.php";
+  public function __construct($message, $type = "info") {
+    parent::__construct($message, $type);
+  }
+
+}

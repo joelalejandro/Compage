@@ -1,15 +1,5 @@
 <?php
 /*
-Plugin Name: Compage
-Plugin URI: https://github.com/Moobin/Compage
-Description: Framework base para construcción de plugins y templates de Wordpress.
-Author: Moobin
-Version: 0.2
-Author URI: http://moobin.net/
-License: MIT
-*/
-
-/*
 Copyright (c) 2013 Joel A. Villarreal Bertoldi
 
 Permission is hereby granted, free of charge, to any
@@ -35,24 +25,38 @@ OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-/**
- * @package Compage
- * @version 0.2
- */
+namespace Compage\Component;
 
-namespace Compage;
+class Entity extends Component {
 
-require "Essentials/PluggableType.php";
-require "Essentials/Pluggable.php";
-require "Essentials/Context.php";
-require "Component/ComponentType.php";
-require "Component/Component.php";
-require "Component/Controller.php";
-require "Component/Entity.php";
-require "Component/Hook.php";
-require "Component/View.php";
-require "Extensions/Notification/BaseNotification.php";
-require "Extensions/Notification/Notification.php";
-require "Plugin/Plugin.php";
-require "Theme/Theme.php";
-require "Theme/Controllers/InitializeController.php";
+  protected $table_structure_file;
+  protected $table_data_file;
+
+  public function __construct(Pluggable $pluggable) {
+    parent::__construct($pluggable);
+    $this->type = ComponentType::Entity;
+  }
+
+  public function getTableStructureFile() {
+    return $this->table_structure_file;
+  }
+
+  public function setTableStructureFile($file) {
+    if (file_exists($this->getPluggable()->getAbsoluteRootPath("database") . "/" . $file)) {
+      $this->table_structure_file = $file;
+    }
+    return $this;
+  }
+
+  public function getTableDataFile() {
+    return $this->table_data_file;
+  }
+
+  public function setTableDataFile($file) {
+    if (file_exists($this->getPluggable()->getAbsoluteRootPath("database") . "/" . $file)) {
+      $this->table_data_file = $file;
+    }    
+    return $this;
+  }
+
+}
