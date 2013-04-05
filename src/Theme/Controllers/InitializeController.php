@@ -71,8 +71,8 @@ class InitializeController extends Controller {
     })->toAction("wp_enqueue_scripts");
 
     $this->hook(function() use ($theme) {
-      foreach ($theme->get("menus") as $menu_id => $menu_caption) {
-        register_nav_menu($menu_id, $menu_caption);
+      foreach ($theme->get("menus") as $menu_id => $menu) {
+        register_nav_menu($menu_id, $menu["caption"]);
       }
     })->toAction("init");
 

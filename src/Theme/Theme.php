@@ -30,6 +30,7 @@ namespace Compage\Theme;
 use Compage\Essentials\Context;
 use Compage\Essentials\Pluggable;
 use Compage\Essentials\PluggableType;
+use Compage\Component\ComponentType;
 use Compage\Theme\Controllers\InitializeController;
 
 abstract class Theme extends Pluggable {
@@ -40,6 +41,8 @@ abstract class Theme extends Pluggable {
   protected $menus;
   protected $sidebars;
   protected $widgets;
+  protected $events;
+  protected $images;
 
   public function __construct($theme_base_file) {
     parent::__construct($theme_base_file);
@@ -49,32 +52,49 @@ abstract class Theme extends Pluggable {
     $this->menus = array();
     $this->sidebars = array();
     $this->widgets = array();
+    $this->events = array();
+    $this->images = array();
 
     $this->type = PluggableType::Theme;
   }
 
-  public function get($collection) {
-    if (!in_array($collection, array(
-      "stylesheets", "scripts", "features", "menus",
-      "sidebars", "widgets"
-    ))) {
-      return false;
+  public function get($collection, $key = "") {
+    if (stripos($collection, "controller") !== false) {
+      return $this->getComponent(ComponentType::Controller, $collection);
+    } else if ($collection == "controller") {
+      return $this->getComponent($collection, $key);
     } else {
-      return $this->{$collection};
+      $array = $this->{$collection};
+      if (isset($key) && $key != "") {
+        if ($collection == "images") {
+          return $array[$key]["source"];  
+        } else {
+          return $array[$key];
+        }        
+      } else {
+        return $array;
+      }
     }
   }
 
   public function addStylesheet($css, $media) {
-    $this->stylesheets[md5(time())] = array(
-      "source" => $css,
+    $this->stylesheets[md5(time().$css)] = array(
+      "source" => $this->getDirectoryAsUri(ComponentType::Asset) . "/" . $css,
       "media" => $media
     );
     return $this;
   }
 
-  public function addScript($js, $footer = false) {
-    $this->scripts[md5(time())] = array(
-      "source" => $js,
+  public function addImage($img) {
+    $this->images[$img] = array(
+      "source" => $this->getDirectoryAsUri(ComponentType::Asset) . "/" . $img
+    );
+    return $this;
+  }
+
+  public function addScript($js, $footer = true) {
+    $this->scripts[md5(time().$js)] = array(
+      "source" => $this->getDirectoryAsUri(ComponentType::Asset) . "/" . $js,
       "footer" => $footer
     );
     return $this;
@@ -94,8 +114,12 @@ abstract class Theme extends Pluggable {
     return $this;
   }
 
-  public function addMenu($id, $caption) {
-    $this->menus[$id] = $caption;
+  public function addMenu($id, $caption, $callback = null) {
+    $this->menus[$id] = array(
+      "caption" => $caption,
+      "callback" => $callback,
+      "id" => $id
+    );
     return $this;
   }
 
@@ -109,8 +133,19 @@ abstract class Theme extends Pluggable {
     return $this;
   }
 
+  public function onInitialize($callback) {
+    $this->events["initialize"][] = $callback;
+    return $this;
+  }
+
   public function initialize() {
     new InitializeController($this);
+    
+    if (isset($this->events["initialize"])) {
+      foreach ($this->events["initialize"] as $callback) {
+        if (is_callable($callback)) { $callback($this); }
+      }
+    }
   }
   
   static public function activate($instance, $file) {

@@ -29,7 +29,7 @@ namespace Compage\Component;
 
 abstract class ComponentType {
 
-  const Controller = 0;
+  const Controller = 8;
   const View = 1;
   const Entity = 2;
   const SqlStructure = 3;

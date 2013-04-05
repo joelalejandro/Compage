@@ -37,6 +37,7 @@ abstract class Context {
 
   public static function get($name) {
     $p = null;
+
     foreach (self::$pluggables as $pluggable) {
       if ($pluggable->getName() == $name) {
         $p = $pluggable;
@@ -49,7 +50,7 @@ abstract class Context {
   public static function getPlugins() {
     $plugins = array();
     foreach (self::$pluggables as $pluggable) {
-      if ($pluggable instanceof Plugin) {
+      if ($pluggable->getType() == PluggableType::Plugin) {
         $plugins[] = $pluggable;
       }
     }
@@ -59,7 +60,7 @@ abstract class Context {
   public static function getThemes() {
     $themes = array();
     foreach (self::$pluggables as $pluggable) {
-      if ($pluggable instanceof Theme) {
+      if ($pluggable->getType() == PluggableType::Theme) {
         $themes[] = $pluggable;
       }
     }

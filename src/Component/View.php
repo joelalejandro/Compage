@@ -27,20 +27,22 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 namespace Compage\Component;
 
+use Compage\Essentials\Context;
+
 class View extends Component {
 
   protected $context;
   protected $extension;
 
   public function __construct($pluggable, $template_name) {
-    parent::__construct($plugin);
+    parent::__construct($pluggable);
     $this->setComponentName($template_name);
     $this->context = array();
     $this->setComponentType(ComponentType::View);
   }
 
   public function getFileName() {
-    return $this->getPluggable()->getAbsoluteRootPath("template") . "/"
+    return $this->getPluggable()->getAbsoluteRootPath(ComponentType::View) . "/"
       . $this->getComponentName() . "." . $this->extension;
   }
 
@@ -66,6 +68,20 @@ class View extends Component {
     return file_get_contents($this->getFileName());    
   }
 
+  public function image($src) {
+    echo $this->getPluggable()->get("images", $src);
+  }
+
+  public function home() {
+    echo home_url();
+  }
+
+  public function menu($name) {
+    $menu = $this->getPluggable()->get("menus", $name);
+    $callback = $menu["callback"];
+    $callback($menu);
+  }
+
   public function render($retval = false) {
     if ($this->extension == "html") { 
       $code = $this->get();
@@ -78,6 +94,11 @@ class View extends Component {
     } else if ($this->extension == "php") {
       $this->load();
     }
+  }
+
+  public static function fetch($id) {
+    list($pluggable, $name) = explode(":", $id);
+    return new View(Context::get($pluggable), $name);
   }
 
 }

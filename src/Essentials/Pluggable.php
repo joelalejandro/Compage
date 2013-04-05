@@ -66,6 +66,10 @@ abstract class Pluggable {
     return $this->directories[$type];
   }
 
+  public function getDirectoryAsUri($type) {
+    return $this->getRootUri() . "/" . $this->directories[$type];
+  }
+
   public function setDirectory($type, $dir) {
     $this->directories[$type] = $dir;
     return $this;
@@ -149,6 +153,17 @@ abstract class Pluggable {
         break;
     }
     $this->components[] = $component;
+  }
+
+  public function getComponent($type, $name) {
+    $requiredComponent = null;
+    foreach ($this->components as $component) {
+      if ($component->getComponentType() == $type && $component->getComponentName() == $name) {
+        $requiredComponent = $component;
+        break;
+      }
+    }
+    return $requiredComponent;
   }
 
   public function loadAll($type) {
