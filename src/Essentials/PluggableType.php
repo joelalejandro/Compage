@@ -32,5 +32,8 @@ abstract class PluggableType {
   const Generic = 0;
   const Plugin = 1;
   const Theme = 2;
+  const CustomPostType = 3;
+  const CustomTaxonomy = 4;
+  const Shortcode = 5;
     
 }

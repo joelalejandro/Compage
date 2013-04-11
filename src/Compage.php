@@ -4,7 +4,7 @@ Plugin Name: Compage
 Plugin URI: https://github.com/Moobin/Compage
 Description: Framework base para construcción de plugins y templates de Wordpress.
 Author: Moobin
-Version: 0.2
+Version: 0.2.1
 Author URI: http://moobin.net/
 License: MIT
 */
@@ -53,6 +53,10 @@ require "Component/Hook.php";
 require "Component/View.php";
 require "Extensions/Notification/BaseNotification.php";
 require "Extensions/Notification/Notification.php";
+require "Extensions/CustomPostType/CustomPostType.php";
+require "Extensions/CustomTaxonomy/CustomTaxonomy.php";
+require "Extensions/CustomTaxonomy/TaxonomyController.php";
+require "Extensions/Shortcode/Shortcode.php";
 require "Plugin/Plugin.php";
 require "Theme/Theme.php";
 require "Theme/Controllers/InitializeController.php";

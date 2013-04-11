@@ -28,6 +28,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 namespace Compage\Theme\Controllers;
 
 use Compage\Component\Controller;
+use Compage\Component\ComponentType;
 use Compage\Essentials\Pluggable;
 
 class InitializeController extends Controller {
@@ -35,14 +36,33 @@ class InitializeController extends Controller {
   public function __construct($theme) {
     parent::__construct($theme);
 
+    $theme->loadAll(ComponentType::Controller)
+      ->loadAll(ComponentType::Shortcode)
+      ->loadAll(ComponentType::CustomTaxonomy)
+      ->loadAll(ComponentType::CustomPostType);
+
+    $this->hook(function($locale) use ($theme) {
+      if (isset($_COOKIE["pll_language"])) {
+        return $_COOKIE["pll_language"];
+      }
+      return $locale;
+    })->toFilter("locale");
+
     $this->hook(function() use ($theme) {
       foreach ($theme->get("features") as $feature => $settings) {
         if ($feature == "shortcode-in-widgets") {
           add_filter("widget_text", "do_shortcode");
-          continue;
+        } else {
+          if (isset($settings) || count($settings) > 0) {
+            add_theme_support($feature, $settings);
+          } else {
+            add_theme_support($feature);
+          }
         }
+      }
 
-        add_theme_support($features, $settings);
+      foreach ($theme->get("locales") as $language => $path) {
+        load_theme_textdomain('eurofrits', dirname($path));
       }
     })->toAction("after_setup_theme");
 
@@ -74,6 +94,14 @@ class InitializeController extends Controller {
       foreach ($theme->get("menus") as $menu_id => $menu) {
         register_nav_menu($menu_id, $menu["caption"]);
       }
+
+      foreach ($theme->get("customTaxonomies") as $tax) {
+        $tax->register();
+      }
+
+      foreach ($theme->get("customPostTypes") as $cpt) {
+        $cpt->register();
+      }
     })->toAction("init");
 
     $this->hook(function() use ($theme) {
@@ -83,6 +111,10 @@ class InitializeController extends Controller {
 
       foreach ($theme->get("widgets") as $widget) {
         register_widget($widget);
+      }
+
+      foreach ($theme->get("shortcodes") as $shortcode) {
+        add_shortcode($shortcode->getKeyword(), array($shortcode, "render"));
       }
     })->toAction("widgets_init");
 

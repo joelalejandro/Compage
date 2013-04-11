@@ -33,6 +33,9 @@ use Compage\Component\Controller;
 use Compage\Component\Entity;
 use Compage\Component\Hook;
 use Compage\Component\View;
+use Compage\Extensions\CustomPostType\CustomPostType;
+use Compage\Extensions\CustomTaxonomy\CustomTaxonomy;
+use Compage\Extensions\Shortcode\Shortcode;
 
 abstract class Pluggable {
 
@@ -48,6 +51,14 @@ abstract class Pluggable {
 
   protected $type;
 
+  protected $customPostTypes;
+
+  protected $customTaxonomies;
+
+  protected $shortcodes;
+
+  protected $locales;
+
   public function __construct($root_file = null) {
     $this->rootFile = $root_file;
     $this->directories = array(
@@ -57,9 +68,17 @@ abstract class Pluggable {
       ComponentType::Log => "Log",
       ComponentType::SqlStructure => "Tables",
       ComponentType::SqlData => "Tables/Data",
-      ComponentType::Entity => "Entities"
+      ComponentType::Entity => "Entities",
+      ComponentType::Shortcode => "Shortcodes",
+      ComponentType::CustomPostType => "CustomPostTypes",
+      ComponentType::CustomTaxonomy => "CustomTaxonomies",
+      ComponentType::Locale => "Locale"
     );
     $this->type = PluggableType::Generic;
+    $this->customPostTypes = array();
+    $this->shortcodes = array();
+    $this->customTaxonomies = array();
+    $this->locales = array();
   }
 
   public function getDirectory($type) {
@@ -151,8 +170,23 @@ abstract class Pluggable {
                   ->setTableStructureFile($name . ".tbls.sql")
                   ->setTableDataFile($name . ".tbld.sql");        
         break;
+      case ComponentType::Shortcode:
+        $component = new Shortcode($this, $name);        
+        $this->shortcodes[] = $component->instantiate();
+        break;
+      case ComponentType::CustomPostType:
+        $component = new CustomPostType($this, $name);        
+        $this->customPostTypes[] = $component->instantiate();
+        break;
+      case ComponentType::CustomTaxonomy:
+        $component = new CustomTaxonomy($this, $name);
+        $this->customTaxonomies[] = $component->instantiate();
+        break;
     }
-    $this->components[] = $component;
+    if ($type != ComponentType::Controller)
+      $this->components[] = $component->instantiate();
+    else
+      $this->components[] = $component;
   }
 
   public function getComponent($type, $name) {
@@ -168,7 +202,8 @@ abstract class Pluggable {
 
   public function loadAll($type) {
     if (in_array($type, array(ComponentType::Controller,
-      ComponentType::View, ComponentType::Entity))) {
+      ComponentType::View, ComponentType::Entity, ComponentType::Shortcode,
+      ComponentType::CustomPostType, ComponentType::CustomTaxonomy))) {
       foreach (glob($this->getRootPath() . "/" . $this->getDirectory($type) . "/*.php") as $component) {
         require_once $component;
         $this->registerComponent($type, basename($component, ".php"));
@@ -180,7 +215,8 @@ abstract class Pluggable {
   /* Loads a specific component. */
   public function load($type, $name) {
     if (in_array($type, array(ComponentType::Controller,
-      ComponentType::View, ComponentType::Entity))) {
+      ComponentType::View, ComponentType::Entity, ComponentType::Shortcode,
+      ComponentType::CustomPostType, ComponentType::CustomTaxonomy))) {
       $component = $this->getRootPath() . "/" . $this->getDirectory($type) . "/$name.php";
       require_once $component;
       $this->registerComponent($type, basename($component, ".php"));

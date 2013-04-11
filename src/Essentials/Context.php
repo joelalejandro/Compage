@@ -37,7 +37,6 @@ abstract class Context {
 
   public static function get($name) {
     $p = null;
-
     foreach (self::$pluggables as $pluggable) {
       if ($pluggable->getName() == $name) {
         $p = $pluggable;

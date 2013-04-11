@@ -37,5 +37,9 @@ abstract class ComponentType {
   const Asset = 5;
   const Log = 6;
   const Hook = 7;
-    
+  const CustomPostType = 9;
+  const CustomTaxonomy = 10;
+  const Shortcode = 11;
+  const Locale = 12;
+  
 }

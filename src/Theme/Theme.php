@@ -61,6 +61,8 @@ abstract class Theme extends Pluggable {
   public function get($collection, $key = "") {
     if (stripos($collection, "controller") !== false) {
       return $this->getComponent(ComponentType::Controller, $collection);
+    } else if (stripos($collection, "customtaxonomy") !== false) {
+      return $this->getComponent(ComponentType::CustomTaxonomy, $collection);
     } else if ($collection == "controller") {
       return $this->getComponent($collection, $key);
     } else {
@@ -100,8 +102,13 @@ abstract class Theme extends Pluggable {
     return $this;
   }
 
+  public function registerLocale($locale) {
+    $this->locales[$locale] = $this->getAbsoluteRootPath(ComponentType::Locale) . "/" . $locale . ".mo";
+    return $this;
+  }
+
   public function addFeature($feature, array $options = array()) {
-    if (!in_array($feature, array(
+    if (in_array($feature, array(
       "post-formats",
       "post-thumbnails",
       "custom-background",
